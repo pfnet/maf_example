@@ -16,7 +16,6 @@ def build(bld):
     TRAIN_DATA = '%s/examples/cifar10/cifar10_train_leveldb' % CAFFE_ROOT
     DEV_DATA = '%s/examples/cifar10/cifar10_test_leveldb' % CAFFE_ROOT
     MEAN_FILE = '%s/examples/cifar10/mean.binaryproto' % CAFFE_ROOT
-    IMAGE_FILE = 'data/cifar-10-batches-py/data_batch_1'
 
     bld(source = 'template/data.prototxt.base',
         target = 'prototxt/part/data.prototxt',
@@ -48,16 +47,21 @@ def build(bld):
     bld(source = 'template/blob.prototxt prototxt/part/net.prototxt template/softmax.prototxt',
         target = 'prototxt/dev.prototxt',
         rule = 'cat ${SRC} > ${TGT}')
+
     bld(source = 'prototxt/solver.prototxt',
         target = 'log/train.log',
         rule = 'caffe train --solver=${SRC} > ${TGT} 2>&1')
+
     bld(source = 'log/train.log',
         target = 'result/loss.json',
         rule = util.log.extract_loss)
+
     bld(source = 'result/loss.json',
         target = 'result/loss.png',
         rule = util.plot.plot,
         aggregate_by = 'base_lr momentum weight_decay')
+
+    IMAGE_FILE = 'data/cifar-10-batches-py/data_batch_1'
     bld(source = 'prototxt/dev.prototxt snapshot/train log/train.log',
         target = 'result/feature.png',
         rule = util.classify.classify(image_file = IMAGE_FILE))
