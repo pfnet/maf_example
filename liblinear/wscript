@@ -10,8 +10,6 @@ def options(opt): opt.load('maf')
 
 def configure(conf): conf.load('maf')
 
-@maflib.plot.plot_by
-def plot(figure, data, parameter):
     LIBLINEAR_METHODS = {
         0: 'L2R Logistic Regression (primal)',
         1: 'L2 SVM (dual)',
@@ -22,21 +20,6 @@ def plot(figure, data, parameter):
         6: 'L1R Logistic Regression',
         7: 'L2R Logistic Regression (dual)'
     }
-
-    axes = figure.add_subplot(111)
-
-    axes.set_xlabel('C')
-    axes.set_xscale('log')
-    axes.set_ylabel('accuracy')
-
-    key_to_xys = data.get_data_2d('cost', 'accuracy', key='type')
-    for key in sorted(key_to_xys):
-        xs, ys = key_to_xys[key]
-        axes.plot(xs, ys, label=LIBLINEAR_METHODS[key])
-
-    axes.legend(loc='best')
-    plt.close()
-
 def build(bld):
     if not os.path.exists('data/svmguide3'):
         bld(target = 'data/svmguide3',
@@ -67,6 +50,8 @@ def build(bld):
     bld(source='result/average_accuracy',
         target='result/plot.png',
         aggregate_by='type cost',
-        rule=plot)
+        rule=maflib.plot.plot_line(x = {'key' : 'cost', 'scale': 'log'},
+                                   y = 'accuracy',
+                                   legend = {'key' : 'type', 'labels' : LIBLINEAR_METHODS}))
 
 
