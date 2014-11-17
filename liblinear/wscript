@@ -1,0 +1,72 @@
+import os
+import maf
+import maflib
+import matplotlib.pyplot as plt
+
+VERSION = '0.0.0'
+APPNAME = 'pydata_demo'
+
+def options(opt): opt.load('maf')
+
+def configure(conf): conf.load('maf')
+
+@maflib.plot.plot_by
+def plot(figure, data, parameter):
+    LIBLINEAR_METHODS = {
+        0: 'L2R Logistic Regression (primal)',
+        1: 'L2 SVM (dual)',
+        2: 'L2 SVM (primal)',
+        3: 'SVM (dual)',
+        4: 'Multiclass SVM',
+        5: 'L1R L2-loss SVM',
+        6: 'L1R Logistic Regression',
+        7: 'L2R Logistic Regression (dual)'
+    }
+
+    axes = figure.add_subplot(111)
+
+    axes.set_xlabel('C')
+    axes.set_xscale('log')
+    axes.set_ylabel('accuracy')
+
+    key_to_xys = data.get_data_2d('cost', 'accuracy', key='type')
+    for key in sorted(key_to_xys):
+        xs, ys = key_to_xys[key]
+        axes.plot(xs, ys, label=LIBLINEAR_METHODS[key])
+
+    axes.legend(loc='best')
+    plt.close()
+
+def build(bld):
+    if not os.path.exists('data/svmguide3'):
+        bld(target = 'data/svmguide3',
+            rule = maflib.rules.download('http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/svmguide3'),
+        )
+
+    NUM_FOLD = 10
+    bld(source='data/svmguide3',
+        target='data/train data/test',
+        parameters=[{'fold': i} for i in range(NUM_FOLD)],
+        rule=maflib.rules.segment_by_line(NUM_FOLD, 'fold'))
+    bld(source='data/train',
+        target='data/model log/train',
+        parameters=maflib.util.product({
+            'type': [1],
+            'cost': [0.01]}),
+        rule='liblinear-train -s ${type} -c ${cost} ${SRC} ${TGT[0].abspath()} > ${TGT[1].abspath()}')
+    bld(source='data/test data/model',
+        target='result/predict log/test',
+        rule='liblinear-predict ${SRC} ${TGT[0].abspath()} > ${TGT[1].abspath()}')
+    bld(source='log/test',
+        target='result/accuracy',
+        rule=maflib.rules.convert_libsvm_accuracy)
+    bld(source='result/accuracy',
+        target='result/average_accuracy',
+        aggregate_by='fold',
+        rule=maflib.rules.average)
+    bld(source='result/average_accuracy',
+        target='result/plot.png',
+        aggregate_by='type cost',
+        rule=plot)
+
+

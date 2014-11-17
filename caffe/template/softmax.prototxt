@@ -1,0 +1,6 @@
+layers {
+  name: "prob"
+  type: SOFTMAX
+  bottom: "ip1"
+  top: "prob"
+}

@@ -1,0 +1,14 @@
+net: "${net}"
+test_iter: ${test_iter}
+test_interval: ${test_interval}
+base_lr: ${base_lr}
+momentum: ${momentum}
+weight_decay: ${weight_decay}
+lr_policy: "${lr_policy}"
+gamma: ${gamma}
+power: ${power}
+display: ${display}
+max_iter: ${max_iter}
+snapshot: ${snapshot}
+snapshot_prefix: "${snapshot_prefix}"
+solver_mode: ${solver_mode}

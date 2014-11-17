@@ -1,0 +1,16 @@
+layers {
+  name: "accuracy"
+  type: ACCURACY
+  bottom: "ip1"
+  bottom: "label"
+  top: "accuracy"
+  include: { phase: TEST }
+}
+layers {
+  name: "loss"
+  type: SOFTMAX_LOSS
+  bottom: "ip1"
+  bottom: "label"
+  top: "loss"
+  include: { phase: TRAIN }
+}
