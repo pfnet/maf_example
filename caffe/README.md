@@ -2,15 +2,15 @@
 
 ## Overview
 
-In this demo scenario, we solve image classification task with varying Deep Neural Networks(DNNs) and their solvers.
+In this demo scenario, we solve image classification task with varying Deep Neural Networks (DNNs) and their solvers.
 
-Procedure we take is as follows:
+Procedures we take are as follows:
 
 - Generate prototxt’s (which configures DNNs and solvers) with varying parameters
 - Evaluate these configuration by
     - training DNNs with image dataset
-    - plot transition of train loss during training
-    - visualize lowest convolutional layer
+    - plotting transitions of train loss during training
+    - visualizing lowest convolutional layer
 
 We change the following parameters, which amounts to 80 configuration patterns (10 for DNN x 8 for solver)
 
@@ -54,7 +54,7 @@ To run demo, execute these commands:
 ```
 $ cd $DEMO_ROOT
 $ ./waf configure
-$ ./waf build -j1 # (or simply ./waf -j1)
+$ ./waf build -j1 # or simply ./waf -j1
 ```
 
 To clear generated files do `./waf distclean`

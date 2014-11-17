@@ -2,7 +2,7 @@
 
 ## Overview
 
-In this demo scenario, we perform a series of procedure which is typical in machine learning.
+In this demo scenario, we perform a series of procedures which is typical in machine learning.
 
 - Split dataset (we use [svmguide3](http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/svmguide3) ) into 10 pieces
 - With varying training methods and cost functions which differ in regularization, 
@@ -17,7 +17,7 @@ To run demo, execute these commands:
 ```
 $ cd $DEMO_ROOT
 $ ./waf configure
-$ ./waf build # (or simply ./waf)
+$ ./waf build # or simply ./waf
 ```
 
 To clear generated files do `./waf distclean`
