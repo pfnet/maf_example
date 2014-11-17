@@ -10,6 +10,18 @@ def options(opt): opt.load('maf')
 
 def configure(conf): conf.load('maf')
 
+def build(bld):
+    SVMGUIDE3_URL='http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/svmguide3'
+    if not os.path.exists('data/svmguide3'):
+        bld(target = 'data/svmguide3',
+            rule = maflib.rules.download(SVMGUIDE3_URL))
+
+    NUM_FOLD = 10
+    bld(source='data/svmguide3',
+        target='data/train data/test',
+        parameters=[{'fold': i} for i in range(NUM_FOLD)],
+        rule=maflib.rules.segment_by_line(NUM_FOLD, 'fold'))
+
     LIBLINEAR_METHODS = {
         0: 'L2R Logistic Regression (primal)',
         1: 'L2 SVM (dual)',
@@ -20,32 +32,25 @@ def configure(conf): conf.load('maf')
         6: 'L1R Logistic Regression',
         7: 'L2R Logistic Regression (dual)'
     }
-def build(bld):
-    if not os.path.exists('data/svmguide3'):
-        bld(target = 'data/svmguide3',
-            rule = maflib.rules.download('http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/svmguide3'),
-        )
-
-    NUM_FOLD = 10
-    bld(source='data/svmguide3',
-        target='data/train data/test',
-        parameters=[{'fold': i} for i in range(NUM_FOLD)],
-        rule=maflib.rules.segment_by_line(NUM_FOLD, 'fold'))
     bld(source='data/train',
         target='data/model log/train',
         parameters=maflib.util.product({'type': [1, 2, 3, 4, 5, 6, 7],
                                         'cost': [0.01, 0.1, 1, 10, 100]}),
         rule='liblinear-train -s ${type} -c ${cost} ${SRC} ${TGT[0].abspath()} > ${TGT[1].abspath()}')
+
     bld(source='data/test data/model',
         target='result/predict log/test',
         rule='liblinear-predict ${SRC} ${TGT[0].abspath()} > ${TGT[1].abspath()}')
+
     bld(source='log/test',
         target='result/accuracy',
         rule=maflib.rules.convert_libsvm_accuracy)
+
     bld(source='result/accuracy',
         target='result/average_accuracy',
         aggregate_by='fold',
         rule=maflib.rules.average)
+
     bld(source='result/average_accuracy',
         target='result/plot.png',
         aggregate_by='type cost',
