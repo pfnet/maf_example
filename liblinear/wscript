@@ -33,9 +33,8 @@ def build(bld):
         rule=maflib.rules.segment_by_line(NUM_FOLD, 'fold'))
     bld(source='data/train',
         target='data/model log/train',
-        parameters=maflib.util.product({
-            'type': [1],
-            'cost': [0.01]}),
+        parameters=maflib.util.product({'type': [1, 2, 3, 4, 5, 6, 7],
+                                        'cost': [0.01, 0.1, 1, 10, 100]}),
         rule='liblinear-train -s ${type} -c ${cost} ${SRC} ${TGT[0].abspath()} > ${TGT[1].abspath()}')
     bld(source='data/test data/model',
         target='result/predict log/test',
