@@ -12,7 +12,7 @@ def configure(conf):
     conf.load('maf')
 
 def build(bld):
-    CAFFE_ROOT = '/home/delta/github.com/caffe/'
+    CAFFE_ROOT = '<path/to/caffe/root/dir>' # Fill in the path according to your environment
     TRAIN_DATA = '%s/examples/cifar10/cifar10_train_leveldb' % CAFFE_ROOT
     DEV_DATA = '%s/examples/cifar10/cifar10_test_leveldb' % CAFFE_ROOT
     MEAN_FILE = '%s/examples/cifar10/mean.binaryproto' % CAFFE_ROOT
